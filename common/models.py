@@ -5,4 +5,5 @@ class CommonModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True) # Automatically set the field to now every time the object is saved
 
     class Meta:
-        abstract = True # not use as an actual Model in DataBase
+        abstract = True  # not use as an actual Model in DataBase
+

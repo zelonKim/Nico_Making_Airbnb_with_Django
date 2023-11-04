@@ -9,6 +9,7 @@ class Room(CommonModel):
         PRIVATE_ROOM = ("private_room", "Private Room")
         SHARED_ROOM="shared_room", "Shared_room"
 
+    name = models.CharField(max_length=180, default="")
     country = models.CharField(max_length=50, default="한국")
     city=models.CharField(max_length=80, default="서울")
     price = models.PositiveIntegerField()
@@ -20,11 +21,19 @@ class Room(CommonModel):
     kind = models.CharField(max_length=20, choices=RoomKindChoices.choices, null=True)
     owner = models.ForeignKey("users.User", on_delete=models.CASCADE) 
     amenities = models.ManyToManyField("rooms.Amenity") # Many To Many Relationship -> Many Room belongs to Many Amenity 
-   
+    category = models.ForeignKey("categories.Category", null=True, blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
 
 
 
 class Amenity(CommonModel):
     name = models.CharField(max_length=150)
-    description = models.CharField(max_length=150, null=True)
+    description = models.CharField(max_length=150, null=True, blank=True)
     
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = "Amenities" 
