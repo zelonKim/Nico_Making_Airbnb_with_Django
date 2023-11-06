@@ -2,6 +2,7 @@ from django.db import models
 from common.models import CommonModel
 
 
+
 class Room(CommonModel):
 
     class RoomKindChoices(models.TextChoices):
@@ -19,12 +20,25 @@ class Room(CommonModel):
     address = models.CharField(max_length=250)
     pet_friendly = models.BooleanField(default=True)
     kind = models.CharField(max_length=20, choices=RoomKindChoices.choices, null=True)
-    owner = models.ForeignKey("users.User", on_delete=models.CASCADE) 
-    amenities = models.ManyToManyField("rooms.Amenity") # Many To Many Relationship -> Many Room belongs to Many Amenity 
-    category = models.ForeignKey("categories.Category", null=True, blank=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="rooms") 
+    amenities = models.ManyToManyField("rooms.Amenity", related_name="rooms") # Many To Many Relationship -> Many Room belongs to Many Amenity 
+    category = models.ForeignKey("categories.Category", null=True, blank=True, on_delete=models.SET_NULL, related_name="rooms")
 
     def __str__(self):
         return self.name
+
+    def total_amenities(self):
+        return self.amenities.count()  
+
+    def rating(self):
+        count = self.reviews.count()
+        if count == 0:
+            return "No Review"
+        else:
+            total_rating = 0
+            for review in self.reviews.all().values("rating"):
+                total_rating += review['rating']
+            return round(total_rating / count, 2)
 
 
 
