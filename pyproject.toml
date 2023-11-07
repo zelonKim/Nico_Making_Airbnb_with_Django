@@ -11,6 +11,7 @@ python = "^3.11"
 django = "^4.2.7"
 beautifulsoup4 = "^4.12.2"
 pillow = "^10.1.0"
+djangorestframework = "^3.14.0"
 
 
 [build-system]
