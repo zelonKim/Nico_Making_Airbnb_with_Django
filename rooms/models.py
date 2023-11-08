@@ -1,8 +1,6 @@
 from django.db import models
 from common.models import CommonModel
 
-
-
 class Room(CommonModel):
 
     class RoomKindChoices(models.TextChoices):
