@@ -21,6 +21,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # path('경로', 뷰 함수): If the user access 경로, Django executes 뷰 함수
-    path("rooms/", include("rooms.urls")), # path('경로', include("애플리케이션명.urls")): If the user access 경로, Django enters the 애플리케이션`s urls.py file
-    path("categories/", include("categories.urls"))
+    path("api/v1/rooms/", include("rooms.urls")), # path('경로', include("애플리케이션명.urls")): If the user access 경로, Django enters the 애플리케이션`s urls.py file
+    path("api/v1/categories/", include("categories.urls")),
+    path("api/v1/experiences/", include("experiences.urls"))
 ]

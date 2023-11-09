@@ -5,8 +5,9 @@ from .models import Category
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category # set the Model to be serialized
-        fields = "__all__" # serializes all fields
-          # fields = ("name", "kind",) # serializes only the specific fields 
+        fields = ("name", "kind",) # serializes only the specific fields 
+          
+          # fields = "__all__" # serializes all fields
           # exclude=("created_at",) # serializes all fields with excluding the specific fields
 
 

@@ -1,0 +1,16 @@
+   {
+    "name": "House created with DRF",
+    "country": "한국",
+    "city": "서울",
+    "price": 1000,
+    "rooms": 2,
+    "toilets": 2,
+    "category": {"name":"lalala", "kind":"rooms"},
+    "amenities": [{"name":"lalala", "description":"wowoww"}],
+    "description": "DRF is great",
+    "address": "123",
+    "pet_friendly": true,
+    "amenities": [1, 2, 3],
+    "category":3,
+    "kind": "private_room"
+   }
