@@ -28,6 +28,11 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError, PermissionDenied
 from rest_framework.status import HTTP_204_NO_CONTENT
 from django.db import transaction
+from reviews.serializers import ReviewSerializer
+from django.conf import settings
+from medias.serializers import PhotoSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly 
+
 
 class Amenities(APIView):
     def get(self, request):
@@ -78,14 +83,19 @@ class AmenitiyDetail(APIView):
 
 
 class Rooms(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly] 
+    # Every user has the permission to GET 
+    # Only Authenticated user has the permission to POST, PUT, DELETE
+
     def get(self, request):
         all_rooms = Room.objects.all()
-        serializer = RoomListSerializer(all_rooms, many=True)
+        serializer = RoomListSerializer(all_rooms, many=True, context={"request": request})
         return Response(serializer.data)
 
 
     def post(self, request):
-        if request.user.is_authenticated:
+        
             serializer = RoomDetailSerializer(data=request.data)
             if serializer.is_valid():
 
@@ -113,14 +123,14 @@ class Rooms(APIView):
                     raise ParseError("Amenity not found")
             else:
                 return Response(serializer.errors)
-        else:
-            raise NotAuthenticated
+       
 
-
-
+###########################
 
 
 class RoomDetail(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly] 
+
     def get_object(self, pk):
         try:
             return Room.objects.get(pk=pk)
@@ -129,14 +139,92 @@ class RoomDetail(APIView):
 
     def get(self, request, pk):
         room = self.get_object(pk)
-        serializer = RoomDetailSerializer(room)
+        serializer = RoomDetailSerializer(room, context={"request": request})
         return Response(serializer.data) 
     
+    def put(self, request, pk):
+        room = self.get_object(pk)
+        if room.owner != request.user:
+            raise PermissionDenied
+
     def delete(self, request, pk):
         room = self.get_object(pk)
-        if not request.user.is_authenticated:
-            raise NotAuthenticated
         if room.owner != request.user:
             raise PermissionDenied
         room.delete()
         return Response(status=HTTP_204_NO_CONTENT)
+    
+
+###########################
+
+
+class RoomReviews(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try: 
+            return Room.objects.get(pk=pk)
+        except Room.DoesNotExist:
+            raise NotFound
+
+
+    def get(self, request, pk):
+        # print(request.query_params)  # If the URL is http://127.0.0.1:8000/api/v1/rooms/3/reviews?page=2 -> <QueryDict: {'page': ['2']}> will be printed
+        try:
+            page = request.query_params.get("page", 1)
+            page = int(page)
+            # print(page) # 2
+        except ValueError:
+            page = 1
+
+        page_size = settings.PAGE_SIZE
+        start = (page -1) * page_size
+        end = start + page_size
+
+        room = self.get_object(pk)
+        serializer = ReviewSerializer(room.reviews.all()[start:end], many=True)
+        return Response(serializer.data)
+    
+
+    def post(self, request, pk):
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            review = serializer.save(
+                user=request.user,
+                room=self.get_object(pk)
+            )
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data)
+
+
+
+
+
+###########################
+
+
+class RoomPhotos(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Room.DeoseNotExist:
+            raise NotFound
+
+    def post(self, request, pk):
+        room = self.get_object(pk)
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        if request.user != room.owner:
+            raise PermissionDenied
+        serializer = PhotoSerializer(data=request.data)
+
+        if serializer.is_valid():
+            photo = serializer.save(room=room)
+            serializer = PhotoSerializer(photo)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)

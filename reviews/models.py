@@ -1,6 +1,8 @@
 from django.db import models
 from common.models import CommonModel
 
+
+
 class Review(CommonModel):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="reviews")
     room = models.ForeignKey("rooms.Room", null=True, blank=True, on_delete=models.CASCADE, related_name="reviews")

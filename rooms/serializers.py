@@ -2,7 +2,8 @@ from rest_framework import serializers
 from .models import Amenity, Room
 from users.serializers import TinyUserSerializer
 from categories.serializers import CategorySerializer
-
+from reviews.serializers import ReviewSerializer
+from medias.serializers import PhotoSerializer
 
 class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,27 +11,35 @@ class AmenitySerializer(serializers.ModelSerializer):
         fields = ("name", "description",)
 
 
-
 class RoomDetailSerializer(serializers.ModelSerializer):
     owner = TinyUserSerializer(read_only=True)
     amenities = AmenitySerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
-    rating = serializers.SerializerMethodField() # 속성명 = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
+    photos = PhotoSerializer(many=True, read_only=True)
+    # reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room
         fields = "__all__"
 
-    def get_rating(self, room): # def get_속성명(self, 필드 파라미터):
-        # return room.kind         #   return 필드 파라미터.필드 프로퍼티명
-        return room.rating()       #   return 필드 파라미터.필드 메서드명()
+    def get_rating(self, room):
+        return room.rating()      
+
+    def get_is_owner(self, room):
+        request = self.context['request']
+        return room.owner == request.user
 
 
 
 
 
 class RoomListSerializer(serializers.ModelSerializer):
-    rating = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()  
+    is_owner = serializers.SerializerMethodField()
+    photos = PhotoSerializer(many=True, read_only=True)
+
     class Meta:
         model = Room
         fields = (
@@ -39,7 +48,14 @@ class RoomListSerializer(serializers.ModelSerializer):
             "country",
             "city",
             "price",
-            "rating"
-        )
+            "rating",
+            "is_owner",
+            "photos",
+        ) 
+
     def get_rating(self, room):
-        return room.rating()
+        return room.rating()    
+
+    def get_is_owner(self, room):
+        request = self.context['request']
+        return room.owner == request.user
