@@ -14,3 +14,11 @@
     "category":3,
     "kind": "private_room"
    }
+
+
+
+      {
+         "guests":2,
+         "check_in":"2023-12-25",
+         "check_out":"2023-12-29"
+      }
