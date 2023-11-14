@@ -11,16 +11,28 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+SECRET_KEY = env("SECRET_KEY")
+
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)cm5(9dc%_b4w4duqau53l#r*rm$c9b5fdb*p+%ey(#*d*f&7t'
+
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,6 +45,7 @@ ALLOWED_HOSTS = []
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
     "strawberry.django",
 ]
 
@@ -156,3 +169,14 @@ MEDIA_ROOT = "uploads" # MEDIA_ROOT = "미디어 파일이 저장될 디렉터�
 MEDIA_URL = "user-uploads/"  # MEDIA_URL = "미디어 파일에 접근하기 위한 URL"
 
 PAGE_SIZE = 3
+
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'rest_framework.authentication.SessionAuthentication',
+        'config.authentication.TrustMeBroAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'config.authentication.JWTAuthentication',
+    ]
+}

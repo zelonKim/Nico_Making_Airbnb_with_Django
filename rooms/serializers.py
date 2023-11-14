@@ -43,6 +43,7 @@ class RoomDetailSerializer(serializers.ModelSerializer):
 class RoomListSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()  
     is_owner = serializers.SerializerMethodField()
+
     photos = PhotoSerializer(many=True, read_only=True)
 
     class Meta:
@@ -64,3 +65,5 @@ class RoomListSerializer(serializers.ModelSerializer):
     def get_is_owner(self, room):
         request = self.context['request']
         return room.owner == request.user
+
+    
