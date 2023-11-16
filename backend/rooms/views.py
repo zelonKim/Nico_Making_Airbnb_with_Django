@@ -168,10 +168,10 @@ class RoomReviews(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_object(self, pk):
-        try: 
+        try:
             return Room.objects.get(pk=pk)
         except Room.DoesNotExist:
-            raise NotFound
+            raise NotFound    
 
 
     def get(self, request, pk):
@@ -191,6 +191,7 @@ class RoomReviews(APIView):
         serializer = ReviewSerializer(room.reviews.all()[start:end], many=True)
         return Response(serializer.data)
     
+
 
     def post(self, request, pk):
         serializer = ReviewSerializer(data=request.data)

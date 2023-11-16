@@ -12,11 +12,12 @@ import Room from "../components/Room";
 import RoomSkeleton from "../components/RoomSkeleton";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getRooms } from "./api";
+import { getRooms } from "../api";
 import { Link } from "react-router-dom";
+import { IRoomList } from "../types";
 
 interface IPhoto {
-  id: string;
+  pk: string;
   file: string;
   description: string;
 }
@@ -33,8 +34,10 @@ interface IRoom {
 }
 
 export default function Home() {
-  const { isLoading, data } = useQuery<IRoom[]>(["rooms"], getRooms);
-
+  const { isLoading, data } = useQuery<IRoomList[]>(["rooms"], getRooms);
+  useEffect(() => {
+    console.log("hello");
+  }, []);
   return (
     <Grid
       mt={10}
@@ -69,6 +72,7 @@ export default function Home() {
 
       {data?.map((room) => (
         <Room
+          key={room.id}
           id={room.id}
           imageUrl={room.photos[0]?.file}
           name={room.name}
