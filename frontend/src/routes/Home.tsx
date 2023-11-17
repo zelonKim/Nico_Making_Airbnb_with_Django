@@ -35,6 +35,7 @@ interface IRoom {
 
 export default function Home() {
   const { isLoading, data } = useQuery<IRoomList[]>(["rooms"], getRooms);
+  
   useEffect(() => {
     console.log("hello");
   }, []);

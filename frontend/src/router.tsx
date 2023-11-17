@@ -1,9 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import Root from "./components/Root";
 import GithubConfirm from "./routes/GithubConfirm";
+import KakaoConfirm from "./routes/kakaoConfirm";
 import Home from "./routes/Home";
 import NotFound from "./routes/NotFound";
 import RoomDetail from "./routes/RoomDetail";
+import UploadRoom from "./routes/UploadRoom";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +18,10 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path:"rooms/upload",
+        element: <UploadRoom />,
+      },
+      {
         path: "rooms/:roomId",
         element: <RoomDetail />,
       },
@@ -25,6 +31,10 @@ const router = createBrowserRouter([
           {
             path: "github",
             element: <GithubConfirm />,
+          },
+          {
+            path: "kakao",
+            element: <KakaoConfirm />,
           },
         ],
       },
