@@ -19,8 +19,10 @@ import { FaStar } from "react-icons/fa";
 
 export default function RoomDetail() {
   const { roomId } = useParams();
-  const { data, isLoading } = useQuery<IRoomDetail>([`rooms`, roomId], getRoom); 
-  const { data: reviewsData, isLoading: isReviewsLoading } = useQuery<IReview[]>([`rooms`, roomId, `reviews`], getRoomReviews);
+  const { data, isLoading } = useQuery<IRoomDetail>([`rooms`, roomId], getRoom);
+  const { data: reviewsData, isLoading: isReviewsLoading } = useQuery<
+    IReview[]
+  >([`rooms`, roomId, `reviews`], getRoomReviews);
 
   return (
     <Box
@@ -52,12 +54,14 @@ export default function RoomDetail() {
             key={index}
           >
             <Skeleton isLoaded={!isLoading} h="100%" w="100%">
-              <Image
-                objectFit={"cover"}
-                w="100%"
-                h="100%"
-                src={data?.photos[index]?.file}
-              />
+              {data?.photos && data.photos.length > 0 ? (
+                <Image
+                  objectFit={"cover"}
+                  w="100%"
+                  h="100%"
+                  src={data?.photos[index]?.file}
+                />
+              ) : null}
             </Skeleton>
           </GridItem>
         ))}

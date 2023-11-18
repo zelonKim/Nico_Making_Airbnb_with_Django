@@ -108,7 +108,7 @@ class Rooms(APIView):
                 if not category_pk:
                     raise ParseError("Category is required")
                 try: 
-                    category = Category.objects.get(pk=category_pk)
+                    category = Category.objects.get(id=category_pk)
                     if category.kind == Category.CatgoryKindChoices.EXPERIENCES: raise ParseError("The category`s kind should be rooms")
                 except category.DoesNotExist:
                     raise ParseError("Category not found")
@@ -119,12 +119,13 @@ class Rooms(APIView):
                         amenities = request.data.get("amenities")
 
                         for amenity_pk in amenities:
-                            amenity = Amenity.objects.get(pk=amenity_pk)
+                            amenity = Amenity.objects.get(id=amenity_pk)
                             room.amenities.add(amenity) 
 
-                        serializer = RoomDetailSerializer(room)
+                        serializer = RoomDetailSerializer(room, context={'reqeust': request})
                         return Response(serializer.data)
-                except Exception:
+                except Exception as e:
+                    print(e)
                     raise ParseError("Amenity not found")
             else:
                 return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
