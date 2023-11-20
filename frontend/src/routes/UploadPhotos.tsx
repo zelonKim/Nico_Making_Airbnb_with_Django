@@ -98,7 +98,7 @@ export default function UploadPhotos() {
               isLoading={
                 createPhotoMutation.isLoading ||
                 UploadImageMutation.isLoading ||
-                UploadURLmutation.isLoading
+                UploadURLMutation.isLoading
               }
               type="submit"
               w="full"

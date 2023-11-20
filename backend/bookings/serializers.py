@@ -26,9 +26,10 @@ class CreateRoomBookingSerializer(serializers.ModelSerializer):
 
 
     def validate(self, data):  # def validate(self, 파라미터): 모든 필드에 해당하는 값을 파라미터로 받음.
+        room = self.context.get('room')
         if data['check_out'] <= data['check_in']:
             raise serializers.ValidationError("Check-in date must precede Check-out date")
-        if Booking.objects.filter(check_in__lte=data["check_out"], check_out__gte=data['check_in']).exists():
+        if Booking.objects.filter(room=room, check_in__lte=data["check_out"], check_out__gte=data['check_in']).exists():
             raise serializers.ValidationError("Those dates are already taken")
         print(data) # [('check_in', datetime.date(2023, 12, 25)), ('check_out', datetime.date(2023, 12, 29)), ('guests', 2)]
         return data
